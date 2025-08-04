@@ -8,9 +8,10 @@ private:
 
 protected:
 	CollisionLayer eCollisionLayer;
-	CollisionType eCollisionType;
+	CollisionResponse eCollisionType;
 	ColliderType eColliderType;
 	bool bOverlapped = false;
+	bool bBlocked = false;
 
 public:
 	virtual void InitComponent() {};
@@ -21,11 +22,14 @@ public:
 
 	CollisionLayer GetCollisionLayer() { return eCollisionLayer; }
 	void SetCollisionLayer(CollisionLayer layer) { eCollisionLayer = layer; }
-	CollisionType GetCollisionType() { return eCollisionType; }
-	void SetCollisionType(CollisionType type) { eCollisionType = type; }
+	CollisionResponse GetCollisionType() { return eCollisionType; }
+	void SetCollisionType(CollisionResponse type) { eCollisionType = type; }
 	ColliderType GetColliderType() { return eColliderType; }
 	void SetColliderType(ColliderType type) { eColliderType = type; }
 
+	bool GetOverlapped() { return bOverlapped; }
 	void SetOverlapped(bool overlap) { bOverlapped = overlap; }
+	bool GetBlocked() { return bBlocked; }
+	void SetBlocked(bool block) { bBlocked = block; }
 };
 

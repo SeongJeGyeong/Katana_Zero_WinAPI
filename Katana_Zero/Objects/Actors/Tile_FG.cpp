@@ -26,7 +26,7 @@ void Tile_FG::Render(HDC hdc)
 	Super::Render(hdc);
 }
 
-void Tile_FG::OnCollisionEnter(Collider* other)
+void Tile_FG::OnCollisionHit(Collider* other)
 {
 	_collider->SetOverlapped(true);
 }

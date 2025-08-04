@@ -26,7 +26,7 @@ class Player : public Actor
 {
 	using Super = Actor;
 private:
-	float _speed = 300.0f;	// 초당 이동속도
+	float _speed = 300.0f;
 	PlayerState EState;
 	Animator* _animator = nullptr;
 
@@ -37,5 +37,5 @@ public:
 
 	virtual int32 GetCurrentState() override { return (int32)EState; }
 
-	virtual void OnCollisionEnter(Collider* other) override;
+	virtual void OnCollisionHit(Collider* other) override;
 };

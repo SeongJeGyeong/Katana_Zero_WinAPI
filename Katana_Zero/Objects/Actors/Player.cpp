@@ -17,13 +17,13 @@ void Player::Init(Vector2 pos)
 	_animator->InitComponent(PlayerState::PLAYER_END);
 	_animator->AddAnimation(PlayerState::PLAYER_IDLE, ResourceManager::GetInstance()->GetTexture("zero_idle"));
 
-	CreateOBBCollider(30, 50, 0, CollisionLayer::PLAYER, CollisionType::C_OVERLAP);
+	CreateOBBCollider(30, 50, 0, CollisionLayer::PLAYER, CollisionResponse::C_OVERLAP);
 }
 
 void Player::Update(float deltaTime)
 {
-	// ÀÌµ¿ °Å¸® = ½Ã°£ * ¼Óµµ
-	// 1ÃÊ´ç speed¸¸Å­ ÀÌµ¿
+	// ì´ë™ ê±°ë¦¬ = ì‹œê°„ * ì†ë„
+	// 1í‹±ë‹¹ speedë§Œí¼ ì´ë™
 	if (InputManager::GetInstance()->GetButtonPressed(KeyType::W))
 	{
 		vPos.y -= (deltaTime * _speed);
@@ -52,7 +52,7 @@ void Player::Render(HDC hdc)
 	Super::Render(hdc);
 }
 
-void Player::OnCollisionEnter(Collider* other)
+void Player::OnCollisionHit(Collider* other)
 {
-	_collider->SetOverlapped(true);
+	_collider->SetBlocked(true);
 }

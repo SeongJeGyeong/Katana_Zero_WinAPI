@@ -37,17 +37,17 @@ void OBBCollider::RenderComponent(HDC hdc)
 	DeleteObject(pen);
 }
 
-// x, y Ãà °è»ê
+// x, y ì¶• ê³„ì‚°
 pair<Vector2, Vector2> OBBCollider::GetAxes() const
 {
 	float cosRotation = cosf(fRotation);
 	float sinRotation = sinf(fRotation);
 
-	return { Vector2(cosRotation, sinRotation),	// XÃà ¹æÇâ
-			Vector2(-sinRotation, cosRotation)};	// YÃà ¹æÇâ(XÃàÀ» ¹İ½Ã°è¹æÇâÀ¸·Î 90µµ È¸Àü)
+	return { Vector2(cosRotation, sinRotation),	// Xì¶• ë°©í–¥
+			Vector2(-sinRotation, cosRotation)};	// Yì¶• ë°©í–¥(Xì¶•ì„ ë°˜ì‹œê³„ë°©í–¥ìœ¼ë¡œ 90ë„ íšŒì „)
 }
 
-// °¢ Á¤Á¡ À§Ä¡ °è»ê
+// ê° ì •ì  ìœ„ì¹˜ ê³„ì‚°
 vector<Vector2> OBBCollider::GetVertices() const
 {
 	float halfWidth = fWidth / 2;
@@ -62,7 +62,7 @@ vector<Vector2> OBBCollider::GetVertices() const
 	return vector<Vector2> { topL.Rotate(fRotation), bottomL.Rotate(fRotation), bottomR.Rotate(fRotation), topR.Rotate(fRotation) };
 }
 
-// Ãà Åõ¿µ
+// ì¶• íˆ¬ì˜
 pair<float, float> OBBCollider::ProjectionAxis(const Vector2& axis) const
 {
 	vector<Vector2> vertices = GetVertices();

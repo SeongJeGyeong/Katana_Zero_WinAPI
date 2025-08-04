@@ -37,7 +37,7 @@ void GameScene::LoadTileActors(json tileData)
 
 		Tile_FG* tile = new Tile_FG();
 		tile->Init({ screenPos.x, screenPos.y }, { data[3], data[4] }, data[0]);
-		tile->CreateOBBCollider(32, 32, 0, CollisionLayer::TILE_FG, CollisionType::C_BLOCK);
+		tile->CreateOBBCollider(32, 32, 0, CollisionLayer::TILE_FG, CollisionResponse::C_BLOCK);
 		_tileList.push_back(tile);
 	}
 

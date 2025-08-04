@@ -25,6 +25,21 @@
     <Filter Include="Mangers">
       <UniqueIdentifier>{885087cf-50bd-4b4c-b606-32dd43f7965c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{5b6c3bbf-1772-459f-afa5-5b45c27911a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components">
+      <UniqueIdentifier>{b9091512-298b-4bb2-95d9-91d195b9cb08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{83cef1db-f6f4-4a61-b863-280b418ebf59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{920b162c-a442-4311-bd15-746d35137737}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Datas">
+      <UniqueIdentifier>{ae184682-bbaf-4669-b63a-84102dc255bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -60,80 +75,80 @@
     <ClInclude Include="Game\Game.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\Scene.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Scenes\LobbyScene.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\UIWorkTool.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\UIBase.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\UIButton.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources\Texture.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Managers\ResourceManager.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Managers\FileManager.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Datas\FileData.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Datas\TextureData.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\UIImage.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Scenes\GameScene.h">
+      <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\EditorScene.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\EditorSub.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Object.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Actors\Actor.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Scenes\LobbyScene.h">
+      <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Components\Component.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Actors\Tile_FG.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Components\OBBCollider.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Managers\CollisionManager.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Scenes\GameScene.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Components\Animator.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Components\TileRenderer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\EditorCamera.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Components\Collider.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\Animator.h">
+      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Components\AABBCollider.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\OBBCollider.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\Scene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Object.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\ResourceManager.h">
+      <Filter>Mangers</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\CollisionManager.h">
+      <Filter>Mangers</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Actors\Actor.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Texture.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIBase.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIButton.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIImage.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIWorkTool.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Datas\TextureData.h">
+      <Filter>Datas</Filter>
+    </ClInclude>
+    <ClInclude Include="Datas\FileData.h">
+      <Filter>Datas</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\FileManager.h">
+      <Filter>Mangers</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\TileRenderer.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Actors\Tile_FG.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\EditorCamera.h">
+      <Filter>Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -155,83 +170,83 @@
     <ClCompile Include="Game\Game.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\Scene.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Scenes\LobbyScene.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\UIWorkTool.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\UIBase.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\Defines.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\UIButton.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Resources\Texture.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Managers\ResourceManager.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Managers\FileManager.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Datas\FileData.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Datas\TextureData.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\UIImage.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Scenes\EditorScene.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\EditorSub.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Object.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="Scenes\Scene.cpp">
+      <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Actors\Actor.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Components\Component.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Actors\Tile_FG.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Components\OBBCollider.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Managers\CollisionManager.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="Scenes\LobbyScene.cpp">
+      <Filter>Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\GameScene.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Components\Animator.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Components\TileRenderer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\EditorCamera.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Components\Collider.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Components\AABBCollider.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\Animator.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\Collider.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Actors\Actor.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\Component.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\FileManager.cpp">
+      <Filter>Mangers</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\CollisionManager.cpp">
+      <Filter>Mangers</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\OBBCollider.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\ResourceManager.cpp">
+      <Filter>Mangers</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\Texture.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Defines.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UIBase.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Object.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UIButton.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UIImage.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UIWorkTool.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Datas\FileData.cpp">
+      <Filter>Datas</Filter>
+    </ClCompile>
+    <ClCompile Include="Datas\TextureData.cpp">
+      <Filter>Datas</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\TileRenderer.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Actors\Tile_FG.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\EditorCamera.cpp">
+      <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

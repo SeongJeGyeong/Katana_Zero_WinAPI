@@ -19,7 +19,7 @@ void Actor::Render(HDC hdc)
 	if (_collider) _collider->RenderComponent(hdc);
 }
 
-void Actor::CreateOBBCollider(float width, float height, float rotation, CollisionLayer layer, CollisionType type)
+void Actor::CreateOBBCollider(float width, float height, float rotation, CollisionLayer layer, CollisionResponse type)
 {
 	_collider = new OBBCollider();
 	_collider->InitOBB(width, height, rotation);
@@ -30,7 +30,7 @@ void Actor::CreateOBBCollider(float width, float height, float rotation, Collisi
 	CollisionManager::GetInstance()->AddCollider(_collider);
 }
 
-void Actor::CreateAABBCollider(float width, float height, CollisionLayer layer, CollisionType type)
+void Actor::CreateAABBCollider(float width, float height, CollisionLayer layer, CollisionResponse type)
 {
 	_collider = new AABBCollider();
 	_collider->InitAABB(width, height);

@@ -1,6 +1,15 @@
 #pragma once
 #include "../Utils/Singleton.h"
 
+struct CollisionInfo
+{
+	bool hasCollision = false;
+	Vector2 hitPos;
+	Vector2 normal;
+	float PenetrationDepth = 0;
+	Vector2 mtv;
+};
+
 class Collider;
 class OBBCollider;
 class AABBCollider;
@@ -14,13 +23,16 @@ private:
 	vector<Collider*> _colliderList[(int32)CollisionLayer::END];
 
 	uint8 COLLISION_BIT_MASK_IGNORE[(int32)CollisionLayer::END] = {};
+	uint8 COLLISION_BIT_MASK_BLOCK[(int32)CollisionLayer::END] = {};
 
-	void SetIgnoreFlag(CollisionLayer type, CollisionLayer ignore);
+	void SetBitFlag(CollisionLayer layer1, CollisionLayer layer2, CollisionResponse responseType, bool on);
 
 	bool CheckCollision(Collider* receive, Collider* send);
 	bool CheckBetweenOBB(OBBCollider* receive, OBBCollider* send);
 	bool CheckBetweenAABB(AABBCollider* receive, AABBCollider* send);
 	bool CheckSeparatingAxis(pair<float, float> proj1, pair<float, float> proj2);
+
+	Vector2 CalculateHitPos(OBBCollider* receive, OBBCollider* send, Vector2 normal);
 
 	void ExecuteCollisionFunc(Collider* receive, Collider* send);
 

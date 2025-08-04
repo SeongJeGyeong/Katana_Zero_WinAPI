@@ -5,7 +5,7 @@
 
 void FileManager::Init()
 {
-    // °¢Á¾ ¸ğµç µ¥ÀÌÅÍ ·Îµå
+    // ê°ì¢… ëª¨ë“  ë°ì´í„° ë¡œë“œ
     fs::path directory = fs::current_path() / L"../GameResources";
     LoadTextureData(directory);
 }
@@ -23,7 +23,7 @@ void FileManager::LoadDataObject(fs::path directory, string key, FileData* fileD
 {
     if (_dataMap.find(key) != _dataMap.end())
     {
-        // ÀÌ¹Ì Á¸ÀçÇÏ´Â Å°¶ó¸é ¸®ÅÏ
+        // ì´ë¯¸ ì¡´ì¬í•˜ëŠ” í‚¤ë¼ë©´ ë¦¬í„´
         return;
     }
 

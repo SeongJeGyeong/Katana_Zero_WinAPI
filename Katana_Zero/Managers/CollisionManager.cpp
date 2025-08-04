@@ -7,12 +7,14 @@
 
 void CollisionManager::Init()
 {
-	// Ãæµ¹À» ¹«½ÃÇÒ °´Ã¼µé ¼¼ÆÃ
-	SetIgnoreFlag(CollisionLayer::PLAYER, CollisionLayer::PLAYER);
-	SetIgnoreFlag(CollisionLayer::PLAYER, CollisionLayer::PLAYER_HITBOX);
-	SetIgnoreFlag(CollisionLayer::ENEMY, CollisionLayer::ENEMY);
-	SetIgnoreFlag(CollisionLayer::ENEMY, CollisionLayer::ENEMY_HITBOX);
-	SetIgnoreFlag(CollisionLayer::TILE_FG, CollisionLayer::TILE_FG);
+	// ì¶©ëŒì„ ë¬´ì‹œí•  ê°ì²´ë“¤ ì„¸íŒ…
+	SetBitFlag(CollisionLayer::PLAYER, CollisionLayer::PLAYER, CollisionResponse::C_IGNORE, true);
+	SetBitFlag(CollisionLayer::PLAYER, CollisionLayer::PLAYER_HITBOX, CollisionResponse::C_IGNORE, true);
+	SetBitFlag(CollisionLayer::ENEMY, CollisionLayer::ENEMY, CollisionResponse::C_IGNORE, true);
+	SetBitFlag(CollisionLayer::ENEMY, CollisionLayer::ENEMY_HITBOX, CollisionResponse::C_IGNORE, true);
+	SetBitFlag(CollisionLayer::TILE_FG, CollisionLayer::TILE_FG, CollisionResponse::C_IGNORE, true);
+
+	SetBitFlag(CollisionLayer::PLAYER, CollisionLayer::TILE_FG, CollisionResponse::C_BLOCK, true);
 }
 
 void CollisionManager::Update()
@@ -29,8 +31,16 @@ void CollisionManager::Update()
 				{
 					if (CheckCollision(receiveCollider, sendCollider))
 					{
-						sendCollider->GetOwner()->OnCollisionEnter(receiveCollider);
-						receiveCollider->GetOwner()->OnCollisionEnter(sendCollider);
+						if (COLLISION_BIT_MASK_BLOCK[receiveLayer] & (uint8)(1 << sendLayer))
+						{
+							sendCollider->GetOwner()->OnCollisionHit(receiveCollider);
+							receiveCollider->GetOwner()->OnCollisionHit(sendCollider);
+						}
+						else
+						{
+							sendCollider->GetOwner()->OnCollisionBeginOverlap(receiveCollider);
+							receiveCollider->GetOwner()->OnCollisionBeginOverlap(sendCollider);
+						}
 					}
 				}
 			}
@@ -54,10 +64,41 @@ void CollisionManager::PostUpdate()
 {
 }
 
-void CollisionManager::SetIgnoreFlag(CollisionLayer type, CollisionLayer ignore)
+void CollisionManager::SetBitFlag(CollisionLayer layer1, CollisionLayer layer2, CollisionResponse responseType, bool on)
 {
-	COLLISION_BIT_MASK_IGNORE[(int8)type] |= ((uint8)1 << (int8)ignore);
-	COLLISION_BIT_MASK_IGNORE[(int8)ignore] |= ((uint8)1 << (int8)type);
+	switch (responseType)
+	{
+	case C_IGNORE:
+		if (on)
+		{
+			// ì„¤ì •
+			COLLISION_BIT_MASK_IGNORE[(int8)layer1] |= ((uint8)1 << (int8)layer2);
+			COLLISION_BIT_MASK_IGNORE[(int8)layer2] |= ((uint8)1 << (int8)layer1);
+		}
+		else
+		{
+			// í•´ì œ
+			COLLISION_BIT_MASK_IGNORE[(int8)layer1] &= ~((uint8)1 << (int8)layer2);
+			COLLISION_BIT_MASK_IGNORE[(int8)layer2] &= ~((uint8)1 << (int8)layer1);
+		}
+		break;
+	case C_BLOCK:
+		if (on)
+		{
+			// ì„¤ì •
+			COLLISION_BIT_MASK_BLOCK[(int8)layer1] |= ((uint8)1 << (int8)layer2);
+			COLLISION_BIT_MASK_BLOCK[(int8)layer2] |= ((uint8)1 << (int8)layer1);
+		}
+		else
+		{
+			// í•´ì œ
+			COLLISION_BIT_MASK_BLOCK[(int8)layer1] &= ~((uint8)1 << (int8)layer2);
+			COLLISION_BIT_MASK_BLOCK[(int8)layer2] &= ~((uint8)1 << (int8)layer1);
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 bool CollisionManager::CheckCollision(Collider* receive, Collider* send)
@@ -79,28 +120,48 @@ bool CollisionManager::CheckCollision(Collider* receive, Collider* send)
 
 bool CollisionManager::CheckBetweenOBB(OBBCollider* receive, OBBCollider* send)
 {
+	CollisionInfo info;
+
 	pair<Vector2, Vector2> receiveAxes = receive->GetAxes();
 	pair<Vector2, Vector2> sendAxes = send->GetAxes();
 
-	if (!CheckSeparatingAxis(receive->ProjectionAxis(receiveAxes.first), send->ProjectionAxis(receiveAxes.first)))
+	Vector2 axes[4] = { receiveAxes.first, receiveAxes.second, sendAxes.first, sendAxes.second };
+	Vector2 minAxis;
+	float minOverlap = INFINITY;
+
+	for (int i = 0; i < 4; ++i)
 	{
-		return false;
-	}
-	if (!CheckSeparatingAxis(receive->ProjectionAxis(receiveAxes.second), send->ProjectionAxis(receiveAxes.second)))
-	{
-		return false;
+		// first : min, second : max
+		pair<float, float> proj1 = receive->ProjectionAxis(axes[i]);
+		pair<float, float> proj2 = send->ProjectionAxis(axes[i]);
+
+		if (!CheckSeparatingAxis(proj1, proj2))
+		{
+			return false;
+		}
+
+		float overlap = min(proj1.second, proj2.second) - max(proj1.first, proj2.first);
+		if (overlap < minOverlap) {
+			minOverlap = overlap;
+			minAxis = axes[i];
+
+			// ë²•ì„  ë°©í–¥ ì¡°ì • (obb1ì—ì„œ obb2ë¡œ í–¥í•˜ë„ë¡)
+			//Vector2 centerDiff = obb2.center - obb1.center;
+			//if (centerDiff.dot(axis) < 0) {
+			//	minAxis = -axis;
+			//}
+		}
+
 	}
 
-	if (!CheckSeparatingAxis(receive->ProjectionAxis(sendAxes.first), send->ProjectionAxis(sendAxes.first)))
-	{
-		return false;
-	}
-	if (!CheckSeparatingAxis(receive->ProjectionAxis(sendAxes.second), send->ProjectionAxis(sendAxes.second)))
-	{
-		return false;
-	}
+	info.hasCollision = true;
+	info.normal = minAxis;
+	info.PenetrationDepth = minOverlap;
+	info.mtv = minAxis * minOverlap;
 
-	// ¸ğµç Ãà¿¡¼­ °ãÄ¡¹Ç·Î Ãæµ¹
+	info.hitPos = CalculateHitPos(receive, send, info.normal);
+
+	// ëª¨ë“  ì¶•ì—ì„œ ê²¹ì¹˜ë¯€ë¡œ ì¶©ëŒ
 	return true;
 }
 
@@ -115,16 +176,16 @@ bool CollisionManager::CheckBetweenAABB(AABBCollider* receive, AABBCollider* sen
 	Vector2 receiveCenter = receive->GetCenter();
 	Vector2 sendCenter = send->GetCenter();
 
-	// Ãæµ¹Ã¼³¢¸® Áß½ÉÀ» ÀÕ´Â º¤ÅÍ
+	// ì¶©ëŒì²´ë¼ë¦¬ ì¤‘ì‹¬ì„ ì‡ëŠ” ë²¡í„°
 	Vector2 n = sendCenter - receiveCenter;
 
-	// Ãæµ¹Ã¼ÀÇ ±æÀÌ, ³ôÀÌÀÇ Àı¹İ
+	// ì¶©ëŒì²´ì˜ ê¸¸ì´, ë†’ì´ì˜ ì ˆë°˜
 	Vector2 receiveExtent = (receiveMax - receiveMin) * 0.5f;
 	Vector2 sendExtent = (sendMax - sendMin) * 0.5f;
 
-	// n.x°¡ 1ÀÌ°Å³ª -1ÀÌ¸é xÃàÀÌ Ãæµ¹
+	// n.xê°€ 1ì´ê±°ë‚˜ -1ì´ë©´ xì¶•ì´ ì¶©ëŒ
 	double overlapX = receiveExtent.x + sendExtent.x - abs(n.x);
-	// n.y°¡ 1ÀÌ°Å³ª -1ÀÌ¸é yÃàÀÌ Ãæµ¹
+	// n.yê°€ 1ì´ê±°ë‚˜ -1ì´ë©´ yì¶•ì´ ì¶©ëŒ
 	double overlapY = receiveExtent.y + sendExtent.y - abs(n.y);
 
 	if (overlapX < 0 || overlapY < 0) return false;
@@ -143,7 +204,7 @@ bool CollisionManager::CheckBetweenAABB(AABBCollider* receive, AABBCollider* sen
 		normal = (n.y < 0) ? Vector2(0, -1) : Vector2(0, 1);
 
 		double penetration = overlapY;
-		// »ç°¢Çü³¢¸® °ãÄ¡´Â À§Ä¡´Â 2±ºµ¥
+		// ì‚¬ê°í˜•ë¼ë¦¬ ê²¹ì¹˜ëŠ” ìœ„ì¹˜ëŠ” 2êµ°ë°
 		int32 contactCount = 2;
 		Vector2 contactPoint1 = Vector2(max(receiveMin.x, sendMin.x), (n.x < 0 ? receiveMin.y : receiveMax.y));
 		Vector2 contactPoint2 = Vector2(max(receiveMax.x, sendMax.x), contactPoint1.y);
@@ -151,16 +212,16 @@ bool CollisionManager::CheckBetweenAABB(AABBCollider* receive, AABBCollider* sen
 
 	return true;
 
-	// sendÀÇ downÀÌ receiveÀÇ upº¸´Ù ³ôÀ» ¶§(°ªÀÌ ´õ ÀÛÀ» ¶§)
-	// sendÀÇ upÀÌ receiveÀÇ downº¸´Ù ³·À» ¶§(°ªÀÌ ´õ Å¬ ¶§)
-	// sendÀÇ left°¡ receiveÀÇ rightº¸´Ù ¿À¸¥ÂÊÀÏ ¶§(°ªÀÌ ´õ Å¬ ¶§)
-	// sendÀÇ right°¡ receiveÀÇ leftº¸´Ù ¿ŞÂÊÀÏ ¶§(°ªÀÌ ´õ ÀÛÀ» ¶§)
+	// sendì˜ downì´ receiveì˜ upë³´ë‹¤ ë†’ì„ ë•Œ(ê°’ì´ ë” ì‘ì„ ë•Œ)
+	// sendì˜ upì´ receiveì˜ downë³´ë‹¤ ë‚®ì„ ë•Œ(ê°’ì´ ë” í´ ë•Œ)
+	// sendì˜ leftê°€ receiveì˜ rightë³´ë‹¤ ì˜¤ë¥¸ìª½ì¼ ë•Œ(ê°’ì´ ë” í´ ë•Œ)
+	// sendì˜ rightê°€ receiveì˜ leftë³´ë‹¤ ì™¼ìª½ì¼ ë•Œ(ê°’ì´ ë” ì‘ì„ ë•Œ)
 	//if (sendMax.y < receiveMin.y ||
 	//	receiveMax.y < sendMin.y ||
 	//	receiveMax.x < sendMin.x ||
 	//	sendMax.x < receiveMin.x)
 	//{
-	//	// Ãæµ¹ÇÏÁö ¾Ê¾ÒÀ½
+	//	// ì¶©ëŒí•˜ì§€ ì•Šì•˜ìŒ
 	//	return false;
 	//}
 
@@ -171,10 +232,43 @@ bool CollisionManager::CheckSeparatingAxis(pair<float, float> proj1, pair<float,
 {
 	if (proj1.second < proj2.first || proj2.second < proj1.first)
 	{
-		return false; // ºĞ¸®Ãà ¹ß°ß
+		return false; // ë¶„ë¦¬ì¶• ë°œê²¬
 	}
 
 	return true;
+}
+
+Vector2 CollisionManager::CalculateHitPos(OBBCollider* receive, OBBCollider* send, Vector2 normal)
+{
+	std::vector<Vector2> vertices1 = receive->GetVertices();
+	std::vector<Vector2> vertices2 = send->GetVertices();
+
+	// ë²•ì„  ë°©í–¥ìœ¼ë¡œ ê°€ì¥ ê°€ê¹Œìš´ ê¼­ì§“ì ë“¤ ì°¾ê¸°
+	float maxDist1 = -INFINITY;
+	float maxDist2 = -INFINITY;
+	Vector2 closestVertex1, closestVertex2;
+
+	// obb1ì—ì„œ ë²•ì„  ë°©í–¥ìœ¼ë¡œ ê°€ì¥ ë¨¼ ì 
+	for (auto& vertex : vertices1) {
+		float dist = vertex.Dot(normal);
+		if (dist > maxDist1) {
+			maxDist1 = dist;
+			closestVertex1 = vertex;
+		}
+	}
+
+	// obb2ì—ì„œ ë²•ì„  ë°˜ëŒ€ ë°©í–¥ìœ¼ë¡œ ê°€ì¥ ë¨¼ ì 
+	Vector2 invNormal = { -normal.x,-normal.y };
+	for (auto& vertex : vertices2) {
+		float dist = vertex.Dot(invNormal);
+		if (dist > maxDist2) {
+			maxDist2 = dist;
+			closestVertex2 = vertex;
+		}
+	}
+
+	// ë‘ ì ì˜ ì¤‘ì ì„ ì ‘ì´‰ì ìœ¼ë¡œ ì‚¬ìš©
+	return (closestVertex1 + closestVertex2) * 0.5f;
 }
 
 void CollisionManager::ExecuteCollisionFunc(Collider* receive, Collider* send)

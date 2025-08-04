@@ -37,7 +37,7 @@ enum CollisionLayer
 	END,
 };
 
-enum CollisionType
+enum CollisionResponse
 {
 	C_IGNORE,
 	C_OVERLAP,
@@ -79,7 +79,7 @@ struct SpriteInfo
 
 struct Vector2
 {
-	// ÁÂÇ¥
+	// ì¢Œí‘œ
 	float x = 0;
 	float y = 0;
 
@@ -87,7 +87,7 @@ struct Vector2
 	Vector2(float x, float y) : x(x), y(y) {}
 	Vector2(POINT pt) : x((float)pt.x), y((float)pt.y) {}
 
-	// »çÄ¢¿¬»ê Á¤ÀÇ
+	// ì‚¬ì¹™ì—°ì‚° ì •ì˜
 	// +, - , *, / 
 	Vector2 operator+(const Vector2& other)
 	{
@@ -131,38 +131,38 @@ struct Vector2
 		return (x == other.x && y == other.y);
 	}
 
-	// º¤ÅÍÀÇ ±æÀÌ ±¸ÇÏ±â
-	// ¿£Áø »ìÆìº¸¸é, Legnth, LengthSquared (º¤ÅÍ´Â º¸Åë ±æÀÌ¸¦ ¸®ÅÏÇÏ´Â ÇÔ¼ö°¡ 2Á¾·ù)
-	// sqrt(·çÆ®) ¿¬»êÀº »ı°¢º¸´Ù ºñ½Î±â ¶§¹®¿¡, ²À ÁøÂ¥ ±æÀÌ°¡ ÇÊ¿äÇÑ °æ¿ì°¡ ¾Æ´Ï¸é,
-	// LengthSquared (Á¦°ö ±æÀÌ) ¹öÀüÀ» »ç¿ëÇÏ´Â°Ô ´õ ÁÁ´Ù.
+	// ë²¡í„°ì˜ ê¸¸ì´ êµ¬í•˜ê¸°
+	// ì—”ì§„ ì‚´í´ë³´ë©´, Legnth, LengthSquared (ë²¡í„°ëŠ” ë³´í†µ ê¸¸ì´ë¥¼ ë¦¬í„´í•˜ëŠ” í•¨ìˆ˜ê°€ 2ì¢…ë¥˜)
+	// sqrt(ë£¨íŠ¸) ì—°ì‚°ì€ ìƒê°ë³´ë‹¤ ë¹„ì‹¸ê¸° ë•Œë¬¸ì—, ê¼­ ì§„ì§œ ê¸¸ì´ê°€ í•„ìš”í•œ ê²½ìš°ê°€ ì•„ë‹ˆë©´,
+	// LengthSquared (ì œê³± ê¸¸ì´) ë²„ì „ì„ ì‚¬ìš©í•˜ëŠ”ê²Œ ë” ì¢‹ë‹¤.
 	float Length()
 	{
 		return ::sqrt(x * x + y * y);
 	}
 
-	// ±æÀÌÀÇ Á¦°ö ¹öÀü
+	// ê¸¸ì´ì˜ ì œê³± ë²„ì „
 	float LengthSquared()
 	{
 		return (x * x + y * y);
 	}
 
-	// ÀÚ±âÀÚ½ÅÀ» Á¤±ÔÈ­
+	// ìê¸°ìì‹ ì„ ì •ê·œí™”
 	void Normalize()
 	{
-		// º¤ÅÍÀÇ Å©±â¸¦ ±¸ÇØ¼­, Å©±â¸¸Å­ ³ª´©±â ÇØÁÖ¸é µÈ´Ù.
+		// ë²¡í„°ì˜ í¬ê¸°ë¥¼ êµ¬í•´ì„œ, í¬ê¸°ë§Œí¼ ë‚˜ëˆ„ê¸° í•´ì£¼ë©´ ëœë‹¤.
 		float length = Length();
 
-		// ¾ğ¸®¾ó ¿£ÁøÀº Ç® ¿ÀÇÂ¼Ò½º. ¾ğ¸®¾ó Âü°íÇØ¼­ °øºÎÇØµµ ÁÁ½À´Ï´Ù.
-		//length °¡ 0ÀÌ°Å³ª ¾öÃ» ÀÛÀ»¼ö ÀÖ´Ù
+		// ì–¸ë¦¬ì–¼ ì—”ì§„ì€ í’€ ì˜¤í”ˆì†ŒìŠ¤. ì–¸ë¦¬ì–¼ ì°¸ê³ í•´ì„œ ê³µë¶€í•´ë„ ì¢‹ìŠµë‹ˆë‹¤.
+		//length ê°€ 0ì´ê±°ë‚˜ ì—„ì²­ ì‘ì„ìˆ˜ ìˆë‹¤
 		if (length < SMALL_NUMBER)
-			return;	// ±»ÀÌ Á¤±ÔÈ­¾ÈÇÏ°í ¸®ÅÏ
+			return;	// êµ³ì´ ì •ê·œí™”ì•ˆí•˜ê³  ë¦¬í„´
 
-		// Á¤±ÔÈ­.
+		// ì •ê·œí™”.
 		x /= length;
 		y /= length;
 	}
 
-	// Á¤±ÔÈ­µÈ º¹»çµÈ º¤ÅÍ
+	// ì •ê·œí™”ëœ ë³µì‚¬ëœ ë²¡í„°
 	Vector2 GetNormalize()
 	{
 		Vector2 normalize = *this;
@@ -170,13 +170,13 @@ struct Vector2
 		return normalize;
 	}
 
-	// ³»Àû
+	// ë‚´ì 
 	float Dot(const Vector2& other)
 	{
 		return x * other.x + y * other.y;
 	}
 
-	// radian °¢µµ¸¸Å­ È¸Àü½ÃÅ°ÀÚ.
+	// radian ê°ë„ë§Œí¼ íšŒì „ì‹œí‚¤ì.
 	Vector2 Rotate(float radian)
 	{
 		float cosA = ::cosf(radian);
@@ -185,11 +185,11 @@ struct Vector2
 		return Vector2(x * cosA - y * sinA, x * sinA + y * cosA);
 	}
 
-	// ¿ÜÀû
+	// ì™¸ì 
 	float Cross(const Vector2& other)
 	{
-		//2D ¶ó¼­, ½ºÄ®¶ó°ª¸¸ ¹İÈ¯À» ÇÑ´Ù. 
-		// ¹ı¼± º¤ÅÍ°¡ ÇÊ¿äÇÑ°Ô ¾Æ´Ï°í, ºÎÈ£¸¦ ÆÇ´ÜÇÏ´Â ½ºÄ®¶ó°ªÀÌ ÇÊ¿äÇÏ´Ù.
+		//2D ë¼ì„œ, ìŠ¤ì¹¼ë¼ê°’ë§Œ ë°˜í™˜ì„ í•œë‹¤. 
+		// ë²•ì„  ë²¡í„°ê°€ í•„ìš”í•œê²Œ ì•„ë‹ˆê³ , ë¶€í˜¸ë¥¼ íŒë‹¨í•˜ëŠ” ìŠ¤ì¹¼ë¼ê°’ì´ í•„ìš”í•˜ë‹¤.
 		return x * other.y - y * other.x;
 	}
 };
@@ -201,5 +201,5 @@ struct TileInfo
 };
 
 
-// ¼±ºĞ°ú »ç°¢ÇüÀÇ Ãæµ¹Ã¼Å©
+// ì„ ë¶„ê³¼ ì‚¬ê°í˜•ì˜ ì¶©ëŒì²´í¬
 bool LineIntersectsAABB(Vector2 p0, Vector2 p1, const RECT& rect, Vector2& outNormal, Vector2& outPos, float& t);

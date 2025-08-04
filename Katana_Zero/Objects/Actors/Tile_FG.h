@@ -22,6 +22,6 @@ public:
 
 
 
-	virtual void OnCollisionEnter(Collider* other) override;
+	virtual void OnCollisionHit(Collider* other) override;
 };
 
