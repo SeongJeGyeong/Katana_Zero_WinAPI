@@ -59,7 +59,7 @@ void EditorScene::Update(float deltatTime)
 	if (InputManager::GetInstance()->GetButtonPressed(KeyType::LeftMouse))
 	{
 		POINT mousePos = InputManager::GetInstance()->GetMousePos();
-		// Å¬¸¯ÇÑ ±×¸®µå À§Ä¡ °è»ê
+		// í´ë¦­í•œ ê·¸ë¦¬ë“œ ìœ„ì¹˜ ê³„ì‚°
 		int32 x = mousePos.x / TILE_SIZE;
 		int32 y = mousePos.y / TILE_SIZE;
 		int32 index = ConvertGridToIndex({ (float)x, (float)y });
@@ -69,7 +69,7 @@ void EditorScene::Update(float deltatTime)
 	else if (InputManager::GetInstance()->GetButtonPressed(KeyType::RightMouse))
 	{
 		POINT mousePos = InputManager::GetInstance()->GetMousePos();
-		// Å¬¸¯ÇÑ ±×¸®µå À§Ä¡ °è»ê
+		// í´ë¦­í•œ ê·¸ë¦¬ë“œ ìœ„ì¹˜ ê³„ì‚°
 		int32 x = mousePos.x / TILE_SIZE;
 		int32 y = mousePos.y / TILE_SIZE;
 		int32 index = ConvertGridToIndex({ (float)x, (float)y });
@@ -126,13 +126,13 @@ void EditorScene::SaveMap()
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = _hwnd;
-	ofn.lpstrFilter = L"JSON (*.json)\0*.json\0¸ğµç ÆÄÀÏ (*.*)\0*.*\0";
+	ofn.lpstrFilter = L"JSON (*.json)\0*.json\0ëª¨ë“  íŒŒì¼ (*.*)\0*.*\0";
 	ofn.lpstrFile = szFileName;
 	ofn.nMaxFile = MAX_PATH;
 	ofn.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
 	ofn.lpstrDefExt = L"tilemap";
 
-	//// ÆÄÀÏ ÀÌ¸§ÀÌ ¼±ÅÃµÇ¾úÀ¸¸é ÀúÀå
+	// íŒŒì¼ ì´ë¦„ì´ ì„ íƒë˜ì—ˆìœ¼ë©´ ì €ì¥
 	if (GetSaveFileName(&ofn)) 
 	{
 		json jsonfile;
@@ -140,7 +140,7 @@ void EditorScene::SaveMap()
 
 		if (file.is_open()) 
 		{
-			// Å¸ÀÏ µ¥ÀÌÅÍ ÀúÀå
+			// íƒ€ì¼ ë°ì´í„° ì €ì¥
 			for (int32 i = 0; i < RenderLayer::LAYER_END; i++)
 			{
 				if (_tileInfoMap[i].empty()) continue;
@@ -177,11 +177,11 @@ void EditorScene::SaveMap()
 
 			file << std::setw(4) << jsonfile;
 			file.close();
-			MessageBox(_hwnd, L"Å¸ÀÏ¸ÊÀÌ ÀúÀåµÇ¾ú½À´Ï´Ù.", L"ÀúÀå ¿Ï·á", MB_OK | MB_ICONINFORMATION);
+			MessageBox(_hwnd, L"íƒ€ì¼ë§µì´ ì €ì¥ë˜ì—ˆìŠµë‹ˆë‹¤.", L"ì €ì¥ ì™„ë£Œ", MB_OK | MB_ICONINFORMATION);
 		}
 		else 
 		{
-			MessageBox(_hwnd, L"ÆÄÀÏÀ» ÀúÀåÇÒ ¼ö ¾ø½À´Ï´Ù.", L"¿À·ù", MB_OK | MB_ICONERROR);
+			MessageBox(_hwnd, L"íŒŒì¼ì„ ì €ì¥í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.", L"ì˜¤ë¥˜", MB_OK | MB_ICONERROR);
 		}
 	}
 }
@@ -194,13 +194,13 @@ void EditorScene::LoadMap()
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = _hwnd;
-	ofn.lpstrFilter = L"JSON (*.json)\0*.json\0¸ğµç ÆÄÀÏ (*.*)\0*.*\0";
+	ofn.lpstrFilter = L"JSON (*.json)\0*.json\0ëª¨ë“  íŒŒì¼ (*.*)\0*.*\0";
 	ofn.lpstrFile = szFileName;
 	ofn.nMaxFile = MAX_PATH;
 	ofn.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY | OFN_FILEMUSTEXIST;
 	ofn.lpstrDefExt = L"tilemap";
 
-	// ÆÄÀÏ ÀÌ¸§ÀÌ ¼±ÅÃµÇ¾úÀ¸¸é ·Îµå
+	// íŒŒì¼ ì´ë¦„ì´ ì„ íƒë˜ì—ˆìœ¼ë©´ ë¡œë“œ
 	if (GetOpenFileName(&ofn)) {
 		std::wstring wFileName = szFileName;
 		std::wstring fileName(wFileName.begin(), wFileName.end());
@@ -238,10 +238,11 @@ void EditorScene::LoadMap()
 			}
 
 			file.close();
-			MessageBox(_hwnd, L"Å¸ÀÏ¸ÊÀÌ ·ÎµåµÇ¾ú½À´Ï´Ù.", L"·Îµå ¿Ï·á", MB_OK | MB_ICONINFORMATION);
+			MessageBox(_hwnd, L"íƒ€ì¼ë§µì´ ë¡œë“œë˜ì—ˆìŠµë‹ˆë‹¤.", L"ë¡œë“œ ì™„ë£Œ", MB_OK | MB_ICONINFORMATION);
 		}
-		else {
-			MessageBox(_hwnd, L"ÆÄÀÏÀ» ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.", L"¿À·ù", MB_OK | MB_ICONERROR);
+		else 
+		{
+			MessageBox(_hwnd, L"íŒŒì¼ì„ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.", L"ì˜¤ë¥˜", MB_OK | MB_ICONERROR);
 		}
 	}
 }

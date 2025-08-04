@@ -14,23 +14,23 @@ void Game::Init(HWND hwnd, HWND hsubwnd)
 {
 	_hwnd = hwnd;
 	_hwndSub = hsubwnd;
-	_hdc = ::GetDC(hwnd);	// ±âº» µµÈ­Áö ³Ñ°Ü¹Þ±â
+	_hdc = ::GetDC(hwnd);	// ê¸°ë³¸ ë„í™”ì§€ ë„˜ê²¨ë°›ê¸°
 
-	// ´õºí ¹öÆÛ¸µ ¹öÆÛ Ãß°¡
+	// ë”ë¸” ë²„í¼ë§ ë²„í¼ ì¶”ê°€
 	::GetClientRect(hwnd, &_rect);
 
-	_hdcBack = ::CreateCompatibleDC(_hdc); // ±âº» hdc¿Í È£È¯µÇ´Â DC¸¦ »ý¼º
+	_hdcBack = ::CreateCompatibleDC(_hdc); // ê¸°ë³¸ hdcì™€ í˜¸í™˜ë˜ëŠ” DCë¥¼ ìƒì„±
 
-	// ÀÌ°Ô Ãß°¡·Î ÇÊ¿äÇÑ ÀÌÀ¯´Â »ý¼ºµÈ È£È¯ hdc´Â ¿ì¸®°¡ ¿øÇÏ´Â Å©±âÀÇ ¹öÆÛ°¡ ¾Æ´Ï¶ó ¾ÆÁÖ ÀÛÀº
-	// ¹öÆÛÀÌ´Ù. ¿ì¸®´Â ¿ì¸® °ÔÀÓÀÇ ÀüÃ¼ Á¤º¸¸¦ ±×¸± µµÈ­Áö°¡ ÇÊ¿äÇÑ°Å¶ó
-	// º°µµÀÇ ºñÆ®¸ÊÀ» ¸¸µé¾î¼­, ¿©±â´Ù°¡ Á¤º¸¸¦ ±×¸±°ÍÀÌ´Ù.
-	_bmpBack = ::CreateCompatibleBitmap(_hdc, _rect.right, _rect.bottom); // hdc¿Í È£È¯µÇ´Â ºñÆ®¸Ê »ý¼º
+	// ì´ê²Œ ì¶”ê°€ë¡œ í•„ìš”í•œ ì´ìœ ëŠ” ìƒì„±ëœ í˜¸í™˜ hdcëŠ” ìš°ë¦¬ê°€ ì›í•˜ëŠ” í¬ê¸°ì˜ ë²„í¼ê°€ ì•„ë‹ˆë¼ ì•„ì£¼ ìž‘ì€
+	// ë²„í¼ì´ë‹¤. ìš°ë¦¬ëŠ” ìš°ë¦¬ ê²Œìž„ì˜ ì „ì²´ ì •ë³´ë¥¼ ê·¸ë¦´ ë„í™”ì§€ê°€ í•„ìš”í•œê±°ë¼
+	// ë³„ë„ì˜ ë¹„íŠ¸ë§µì„ ë§Œë“¤ì–´ì„œ, ì—¬ê¸°ë‹¤ê°€ ì •ë³´ë¥¼ ê·¸ë¦´ê²ƒì´ë‹¤.
+	_bmpBack = ::CreateCompatibleBitmap(_hdc, _rect.right, _rect.bottom); // hdcì™€ í˜¸í™˜ë˜ëŠ” ë¹„íŠ¸ë§µ ìƒì„±
 
-	// ¿©±â´Ù°¡ »ý¼ºµÈ ¹é¹öÆÛ HDC¿Í °ÔÀÓ»çÀÌÁî¿¡ ¸Â´Â ÅØ½ºÃÄ¸¦ ¿¬°áÇÑ´Ù.
-	HBITMAP prev = (HBITMAP)::SelectObject(_hdcBack, _bmpBack); // DC¿Í BMP¸¦ ¿¬°á
+	// ì—¬ê¸°ë‹¤ê°€ ìƒì„±ëœ ë°±ë²„í¼ HDCì™€ ê²Œìž„ì‚¬ì´ì¦ˆì— ë§žëŠ” í…ìŠ¤ì³ë¥¼ ì—°ê²°í•œë‹¤.
+	HBITMAP prev = (HBITMAP)::SelectObject(_hdcBack, _bmpBack); // DCì™€ BMPë¥¼ ì—°ê²°
 	::DeleteObject(prev);
 
-	// ¿ÜºÎ ÆùÆ®¸¦ ½Ã½ºÅÛ¿¡ ÀÓ½Ã·Î µî·Ï
+	// ì™¸ë¶€ í°íŠ¸ë¥¼ ì‹œìŠ¤í…œì— ìž„ì‹œë¡œ ë“±ë¡
 	fs::path directory = fs::current_path() / L"../GameResources";
 	AddFontResourceEx((directory / L"Fonts/DungGeunMo.ttf").c_str(), FR_PRIVATE, 0);
 
@@ -45,11 +45,11 @@ void Game::Init(HWND hwnd, HWND hsubwnd)
 		CLIP_DEFAULT_PRECIS,
 		ANTIALIASED_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE,
-		L"µÕ±Ù¸ð²Ã"
+		L"ë‘¥ê·¼ëª¨ê¼´"
 	);
 
-	// °ÔÀÓ°ú °ü·ÃµÈ ÃÊ±âÈ­°¡ ÇÊ¿äÇÑ Ç×¸ñµéÀº ¿©±â¼­
-	InputManager::GetInstance()->Init(_hwnd, _hwndSub);	// °´Ã¼¸¦ »ý¼º
+	// ê²Œìž„ê³¼ ê´€ë ¨ëœ ì´ˆê¸°í™”ê°€ í•„ìš”í•œ í•­ëª©ë“¤ì€ ì—¬ê¸°ì„œ
+	InputManager::GetInstance()->Init(_hwnd, _hwndSub);	// ê°ì²´ë¥¼ ìƒì„±
 	TimeManager::GetInstance()->Init();
 	ResourceManager::GetInstance()->Init(_hwnd, directory);
 	CollisionManager::GetInstance()->Init();
@@ -74,7 +74,7 @@ void Game::Destroy()
 
 void Game::Update()
 {
-	// CurScene º¯°æ ¿äÃ»ÀÌ ÀÖÀ¸¸é, ÇöÀç ¾ÀÀ» º¯°æ¸ÕÀú ÇÏ°í, ÇØ´ç ¾À ¾÷µ¥ÀÌÆ®¸¦ ¼öÇàÇÑ´Ù.
+	// CurScene ë³€ê²½ ìš”ì²­ì´ ìžˆìœ¼ë©´, í˜„ìž¬ ì”¬ì„ ë³€ê²½ë¨¼ì € í•˜ê³ , í•´ë‹¹ ì”¬ ì—…ë°ì´íŠ¸ë¥¼ ìˆ˜í–‰í•œë‹¤.
 	if (_nextScene)
 	{
 		if (_currScene)
@@ -130,11 +130,11 @@ void Game::Render()
 	}
 
 
-	// ¿©ºÐ µµÈ­Áö¿¡ ·»´õ¸µ ³¡.
-	// ÇÑ¹ø ±×¸²À» ´Ù ±×·ÈÀ¸´Ï, ÀÌÁ¦´Â ÇÁ·ÐÆ® ¹öÆÛ¿¡ º¹»ç.
-	::BitBlt(_hdc, 0, 0, _rect.right, _rect.bottom, _hdcBack, 0, 0, SRCCOPY); // ºñÆ® ºí¸´ : °í¼Ó º¹»ç
+	// ì—¬ë¶„ ë„í™”ì§€ì— ë Œë”ë§ ë.
+	// í•œë²ˆ ê·¸ë¦¼ì„ ë‹¤ ê·¸ë ¸ìœ¼ë‹ˆ, ì´ì œëŠ” í”„ë¡ íŠ¸ ë²„í¼ì— ë³µì‚¬.
+	::BitBlt(_hdc, 0, 0, _rect.right, _rect.bottom, _hdcBack, 0, 0, SRCCOPY); // ë¹„íŠ¸ ë¸”ë¦¿ : ê³ ì† ë³µì‚¬
 
-	// ÇÁ·ÐÆ® ¹öÆÛ¿¡ º¹»ç°¡ ³¡³µÀ¸¸é, ¹é¹öÆÛ´Â ÃÊ±âÈ­
+	// í”„ë¡ íŠ¸ ë²„í¼ì— ë³µì‚¬ê°€ ëë‚¬ìœ¼ë©´, ë°±ë²„í¼ëŠ” ì´ˆê¸°í™”
 	::PatBlt(_hdcBack, 0, 0, _rect.right, _rect.bottom, _background);
 }
 
