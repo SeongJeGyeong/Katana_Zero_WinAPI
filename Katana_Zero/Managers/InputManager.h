@@ -41,7 +41,7 @@ enum class KeyType
 	F2 = VK_F2,
 };
 
-// ¾ğ¸®¾óÀÇ ¹æ½Ä
+// ì–¸ë¦¬ì–¼ì˜ ë°©ì‹
 constexpr int32 KEY_TYPE_COUNT = static_cast<int32>(UINT8_MAX) + 1;
 
 class InputManager : public Singleton<InputManager>
@@ -63,16 +63,16 @@ public:
 	void Init(HWND hwnd, HWND subHwnd);
 	void Update();
 
-	// ´©¸£°í ÀÖÀ» ¶§
+	// ëˆ„ë¥´ê³  ìˆì„ ë•Œ
 	bool GetButtonPressed(KeyType key) { return GetState(key) == KeyState::Press; }
 
-	// ¸Ç Ã³À½ ´­·¶À» ¶§
+	// ë§¨ ì²˜ìŒ ëˆŒë €ì„ ë•Œ
 	bool GetButtonDown(KeyType key) { return GetState(key) == KeyState::Down; }
 
-	// ¸Ç Ã³À½ ´­·¶´Ù°¡ ¶ª ¶§
+	// ë§¨ ì²˜ìŒ ëˆŒë €ë‹¤ê°€ ë•” ë•Œ
 	bool GetButtonUp(KeyType key) { return GetState(key) == KeyState::Up; }
 
-	// ¸¶¿ì½º ÁÂÇ¥ ¾ò¾î¿À±â
+	// ë§ˆìš°ìŠ¤ ì¢Œí‘œ ì–»ì–´ì˜¤ê¸°
 	POINT GetMousePos() { return _mousePos; }
 	POINT GetSubMousePos() { return _subMousePos; }
 };

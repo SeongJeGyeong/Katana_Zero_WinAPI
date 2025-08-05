@@ -146,7 +146,7 @@ void Game::ChangeGameScene()
 		_nextScene = nullptr;
 	}
 
-	_nextScene = new GameScene("test2.json");
+	_nextScene = new GameScene("physicsTest.json");
 	_background = WHITENESS;
 }
 

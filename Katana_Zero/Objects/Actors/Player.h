@@ -26,9 +26,33 @@ class Player : public Actor
 {
 	using Super = Actor;
 private:
-	float _speed = 300.0f;
 	PlayerState EState;
 	Animator* _animator = nullptr;
+
+	Vector2 vGravity = Vector2(0, 1000.f);
+	Vector2 vVelocity = {};
+	Vector2 vAcceleration = {};
+
+	float fMoveForce = 2000;
+	float fMass = 1;
+
+	float fJumpPressedTime = 0.f;
+	float fPrevPressedTime = 0.f;
+
+	float fJumpForce = 0;
+	bool bIsGround = false;
+	bool bJumped = false;
+	bool bJumpPressed = false;
+	bool bIsFalling = true;
+	float JumpFactor = -100;
+	float JumpAccumFactor = -10;
+	float minJumpForce = -2000.f;
+	float maxJumpForce = -3000.f;
+
+	float minJumpHeight = -80.f;
+	float maxJumpHeight = -200.f;
+	float targetJumpY = 0.f;
+	float JumpStartY = 0.f;
 
 public:
 	virtual void Init(Vector2 pos) override;
@@ -38,4 +62,7 @@ public:
 	virtual int32 GetCurrentState() override { return (int32)EState; }
 
 	virtual void OnCollisionHit(Collider* other) override;
+
+	void ApplyPhysics(float deltaTime);
+	void newApplyPhysics(float deltaTime);
 };

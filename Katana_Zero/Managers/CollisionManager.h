@@ -1,18 +1,10 @@
 #pragma once
 #include "../Utils/Singleton.h"
 
-struct CollisionInfo
-{
-	bool hasCollision = false;
-	Vector2 hitPos;
-	Vector2 normal;
-	float PenetrationDepth = 0;
-	Vector2 mtv;
-};
-
 class Collider;
 class OBBCollider;
 class AABBCollider;
+class Player;
 
 class CollisionManager : public Singleton<CollisionManager>
 {
@@ -29,6 +21,7 @@ private:
 
 	bool CheckCollision(Collider* receive, Collider* send);
 	bool CheckBetweenOBB(OBBCollider* receive, OBBCollider* send);
+	bool CheckBetweenSAT(OBBCollider* receive, OBBCollider* send);
 	bool CheckBetweenAABB(AABBCollider* receive, AABBCollider* send);
 	bool CheckSeparatingAxis(pair<float, float> proj1, pair<float, float> proj2);
 
@@ -43,5 +36,8 @@ public:
 	void Render(HDC hdc);
 
 	void AddCollider(Collider* collider);
+
+	vector<Collider*> GetPlacedColliders(CollisionLayer layer) { return _colliderList[layer]; }
+	bool CheckBlockedCollision(Player* player, Vector2 start, Vector2 end, Vector2& outNormal, Vector2& outPos);
 };
 

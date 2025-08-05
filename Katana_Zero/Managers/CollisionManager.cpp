@@ -4,6 +4,7 @@
 #include "../Components/OBBCollider.h"
 #include "../Components/AABBCollider.h"
 #include "../Objects/Actors/Actor.h"
+#include "../Objects/Actors/Player.h"
 
 void CollisionManager::Init()
 {
@@ -14,7 +15,7 @@ void CollisionManager::Init()
 	SetBitFlag(CollisionLayer::ENEMY, CollisionLayer::ENEMY_HITBOX, CollisionResponse::C_IGNORE, true);
 	SetBitFlag(CollisionLayer::TILE_FG, CollisionLayer::TILE_FG, CollisionResponse::C_IGNORE, true);
 
-	SetBitFlag(CollisionLayer::PLAYER, CollisionLayer::TILE_FG, CollisionResponse::C_BLOCK, true);
+	SetBitFlag(CollisionLayer::PLAYER, CollisionLayer::TILE_FG, CollisionResponse::C_IGNORE, true);
 }
 
 void CollisionManager::Update()
@@ -120,8 +121,6 @@ bool CollisionManager::CheckCollision(Collider* receive, Collider* send)
 
 bool CollisionManager::CheckBetweenOBB(OBBCollider* receive, OBBCollider* send)
 {
-	CollisionInfo info;
-
 	pair<Vector2, Vector2> receiveAxes = receive->GetAxes();
 	pair<Vector2, Vector2> sendAxes = send->GetAxes();
 
@@ -144,24 +143,55 @@ bool CollisionManager::CheckBetweenOBB(OBBCollider* receive, OBBCollider* send)
 		if (overlap < minOverlap) {
 			minOverlap = overlap;
 			minAxis = axes[i];
-
-			// 법선 방향 조정 (obb1에서 obb2로 향하도록)
-			//Vector2 centerDiff = obb2.center - obb1.center;
-			//if (centerDiff.dot(axis) < 0) {
-			//	minAxis = -axis;
-			//}
 		}
 
 	}
 
-	info.hasCollision = true;
-	info.normal = minAxis;
-	info.PenetrationDepth = minOverlap;
-	info.mtv = minAxis * minOverlap;
+	if (receive->GetPos().x < send->GetPos().x) minAxis = { -minAxis.x, -minAxis.y };
 
-	info.hitPos = CalculateHitPos(receive, send, info.normal);
+	receive->SetHittedNormal(minAxis);
+	Vector2 hitPos = CalculateHitPos(receive, send, minAxis);
+	receive->SetHitPos(hitPos);
+	receive->SetHitMTV(minAxis * minOverlap);
 
-	// 모든 축에서 겹치므로 충돌
+	return true;
+}
+
+bool CollisionManager::CheckBetweenSAT(OBBCollider* receive, OBBCollider* send)
+{
+	pair<Vector2, Vector2> receiveAxes = receive->GetAxes();
+	pair<Vector2, Vector2> sendAxes = send->GetAxes();
+
+	Vector2 axes[4] = { receiveAxes.first, receiveAxes.second, sendAxes.first, sendAxes.second };
+	Vector2 minAxis;
+	float minOverlap = INFINITY;
+
+	for (int i = 0; i < 4; ++i)
+	{
+		// first : min, second : max
+		pair<float, float> proj1 = receive->ProjectionAxis(axes[i]);
+		pair<float, float> proj2 = send->ProjectionAxis(axes[i]);
+
+		if (!CheckSeparatingAxis(proj1, proj2))
+		{
+			return false;
+		}
+
+		float overlap = min(proj1.second, proj2.second) - max(proj1.first, proj2.first);
+		if (overlap < minOverlap) {
+			minOverlap = overlap;
+			minAxis = axes[i];
+		}
+
+	}
+
+	if (receive->GetPos().x < send->GetPos().x) minAxis = { -minAxis.x, -minAxis.y };
+
+	receive->SetHittedNormal(minAxis);
+	Vector2 hitPos = CalculateHitPos(receive, send, minAxis);
+	receive->SetHitPos(hitPos);
+	receive->SetHitMTV(minAxis * minOverlap);
+
 	return true;
 }
 
@@ -177,55 +207,66 @@ bool CollisionManager::CheckBetweenAABB(AABBCollider* receive, AABBCollider* sen
 	Vector2 sendCenter = send->GetCenter();
 
 	// 충돌체끼리 중심을 잇는 벡터
-	Vector2 n = sendCenter - receiveCenter;
+	double nx = sendCenter.x - receiveCenter.x;
+	double ny = sendCenter.y - receiveCenter.y;
 
 	// 충돌체의 길이, 높이의 절반
 	Vector2 receiveExtent = (receiveMax - receiveMin) * 0.5f;
 	Vector2 sendExtent = (sendMax - sendMin) * 0.5f;
 
 	// n.x가 1이거나 -1이면 x축이 충돌
-	double overlapX = receiveExtent.x + sendExtent.x - abs(n.x);
+	double overlapX = receiveExtent.x + sendExtent.x - abs(nx);
 	// n.y가 1이거나 -1이면 y축이 충돌
-	double overlapY = receiveExtent.y + sendExtent.y - abs(n.y);
+	double overlapY = receiveExtent.y + sendExtent.y - abs(ny);
 
 	if (overlapX < 0 || overlapY < 0) return false;
+
 	Vector2 normal;
-	if (overlapX < overlapY)
+	Vector2 hitPos;
+
+	// 위, 아래 충돌
+	if (overlapX > overlapY)
 	{
-		normal = (n.x < 0) ? Vector2(-1, 0) : Vector2(1, 0);
+		if (ny < 0)
+		{
+			normal = Vector2(0, -1);
+		}
+		else
+		{
+			normal = Vector2(0, 1);
+		}
+
+		double penetration = overlapY;
+
+		int32 contactCount = 2;
+		Vector2 contactPoint1 = Vector2(max(receiveMin.x, sendMin.x), (ny < 0 ? receiveMin.y : receiveMax.y));
+		Vector2 contactPoint2 = Vector2(max(receiveMax.x, sendMax.x), contactPoint1.y);
+		hitPos = { (contactPoint1.x + contactPoint2.x) * 0.5f, (contactPoint1.y + contactPoint2.y) * 0.5f };
+	}
+	// 왼쪽, 오른쪽 충돌
+	else
+	{
+		if (nx < 0)
+		{
+			normal = Vector2(-1, 0);
+		}
+		else
+		{
+			normal = Vector2(1, 0);
+		}
 
 		double penetration = overlapX;
 		int32 contactCount = 2;
-		Vector2 contactPoint1 = Vector2((n.x < 0 ? receiveMin.x : receiveMax.x), max(receiveMin.y, sendMin.y));
+		Vector2 contactPoint1 = Vector2((nx < 0 ? receiveMin.x : receiveMax.x), max(receiveMin.y, sendMin.y));
 		Vector2 contactPoint2 = Vector2(contactPoint1.x, min(receiveMax.y, sendMax.y));
-	}
-	else
-	{
-		normal = (n.y < 0) ? Vector2(0, -1) : Vector2(0, 1);
-
-		double penetration = overlapY;
-		// 사각형끼리 겹치는 위치는 2군데
-		int32 contactCount = 2;
-		Vector2 contactPoint1 = Vector2(max(receiveMin.x, sendMin.x), (n.x < 0 ? receiveMin.y : receiveMax.y));
-		Vector2 contactPoint2 = Vector2(max(receiveMax.x, sendMax.x), contactPoint1.y);
+		hitPos = { (contactPoint1.x + contactPoint2.x) * 0.5f, (contactPoint1.y + contactPoint2.y) * 0.5f };
 	}
 
+
+	receive->SetHittedNormal(normal);
+	receive->SetHitPos(hitPos);
+	receive->SetHitInfo(hitPos, normal);
 	return true;
-
-	// send의 down이 receive의 up보다 높을 때(값이 더 작을 때)
-	// send의 up이 receive의 down보다 낮을 때(값이 더 클 때)
-	// send의 left가 receive의 right보다 오른쪽일 때(값이 더 클 때)
-	// send의 right가 receive의 left보다 왼쪽일 때(값이 더 작을 때)
-	//if (sendMax.y < receiveMin.y ||
-	//	receiveMax.y < sendMin.y ||
-	//	receiveMax.x < sendMin.x ||
-	//	sendMax.x < receiveMin.x)
-	//{
-	//	// 충돌하지 않았음
-	//	return false;
-	//}
-
-	//return true;
 }
 
 bool CollisionManager::CheckSeparatingAxis(pair<float, float> proj1, pair<float, float> proj2)
@@ -274,4 +315,55 @@ Vector2 CollisionManager::CalculateHitPos(OBBCollider* receive, OBBCollider* sen
 void CollisionManager::ExecuteCollisionFunc(Collider* receive, Collider* send)
 {
 	//send->GetCollider()->
+}
+
+bool CollisionManager::CheckBlockedCollision(Player* player, Vector2 start, Vector2 end, Vector2& outNormal, Vector2& outPos)
+{
+	float tMin = FLT_MAX;
+	Actor* closestActor = nullptr;
+
+	vector<Collider*> tiles = GetPlacedColliders(CollisionLayer::TILE_FG);
+
+	for (auto tile : tiles)
+	{
+		float playerWidth = player->GetCollider()->GetWidth();
+		float playerHeight = player->GetCollider()->GetHeight();
+
+		float width = tile->GetWidth();
+		float height = tile->GetHeight();
+
+		RECT rect;
+
+		rect.left = tile->GetCenterOffset().x - width * 0.5f;
+		rect.right = tile->GetCenterOffset().x + width * 0.5f;
+		rect.top = tile->GetCenterOffset().y - height * 0.5f;
+		rect.bottom = tile->GetCenterOffset().y + height * 0.5f;
+
+		rect.left -= playerWidth * 0.5f;
+		rect.right += playerWidth * 0.5f;
+		rect.top -= playerHeight * 0.5f;
+		rect.bottom += playerHeight * 0.5f;
+
+		float t = 0.f;
+		Vector2 normal;
+		Vector2 hitPos;
+		if (LineIntersectsAABB(start, end, rect, normal, hitPos, t))
+		{
+			if (t < tMin)
+			{
+				outNormal = normal;
+				outPos = hitPos;
+				tMin = t;
+				closestActor = tile->GetOwner();
+			}
+		}
+	}
+
+
+	if (closestActor != nullptr)
+	{
+		return true;
+	}
+
+	return false;
 }
